@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import ImagenCripto from "./img/imagen-criptos.png";
+import Formulario from './components/Formulario'
 
 const Contenedor = styled.div`
   max-width: 900px;
@@ -45,6 +46,7 @@ function App() {
       <Imagen src={ImagenCripto} alt="imagenes criptomonedas" />
       <div>
         <Heading>Cotiza Criptomonedas al Instante</Heading>;
+        <Formulario/>
       </div>
     </Contenedor>
   );
