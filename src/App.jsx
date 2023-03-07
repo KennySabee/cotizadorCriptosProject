@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
+import Formulario from "./components/Formulario";
+import Resultado from "./components/Resultado";
 import ImagenCripto from "./img/imagen-criptos.png";
-import Formulario from './components/Formulario'
 
 const Contenedor = styled.div`
   max-width: 900px;
@@ -30,8 +31,8 @@ const Heading = styled.h1`
   margin-bottom: 50px;
   font-size: 34px;
 
-  &::after{
-    content: '';
+  &::after {
+    content: "";
     width: 100px;
     height: 6px;
     background-color: #66a2fe;
@@ -41,13 +42,31 @@ const Heading = styled.h1`
 `;
 
 function App() {
+  const [monedas, setMonedas] = useState({});
+  const [resultado, setResultado] = useState({});
+
+  useEffect(() => {
+    if (Object.keys(monedas).length > 1) {
+      const cotizarCripto = async () => {
+        const { moneda, criptoMoneda } = monedas;
+        const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptoMoneda}&tsyms=${moneda}`;
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        setResultado(resultado.DISPLAY[criptoMoneda][moneda]); //la api tiene distintos links para traer la info de la api y esta es la abreviatura de la cripto, en este caso con display y los arreglos se obtiene esa info para hacer la consulta
+      };
+      cotizarCripto();
+    }
+  }, [monedas]);
+
   return (
     <Contenedor>
       <Imagen src={ImagenCripto} alt="imagenes criptomonedas" />
       <div>
         <Heading>Cotiza Criptomonedas al Instante</Heading>;
-        <Formulario/>
-      </div>
+        <Formulario setMonedas={setMonedas} />
+        { resultado.PRICE && <Resultado resultado={resultado}/>}
+        
+      </div>  
     </Contenedor>
   );
 }
